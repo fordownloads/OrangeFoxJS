@@ -1,0 +1,560 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrangeFox theme preview</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;    background: #ccc;
+        }
+        #content {
+            background: #202124;
+            border-radius: 24px;
+            width: 1080px;
+            height: 1920px;
+            position: relative;
+            zoom: 0.3;
+            overflow: hidden;
+            box-shadow: 0 4px 16px 0 #0003;
+            display: flex;
+        }
+        content > div, content > img, content > input, content > button {
+            border: none;
+            background: #0000;
+            position: absolute;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        img {background: none !important;}
+        .bg {
+            width: 1080px;
+            height: 1920px;
+            z-index: 0 !important;
+        }
+        color {
+            width: 100%;
+            height: 100%;
+        }
+        btns {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            display: flex;
+            gap: 8px;
+            display: none;
+        }
+        #varlist {
+            width: 0px;
+            height: 512px;
+            background: #fff;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            padding: 10px 0;
+            transition: 0.4s ease all;
+        }
+        var {
+            display: block;
+            width: 100%;
+            height: 10px;
+            padding: 6px 10px;
+            font: 10px monospace;
+            color:#202124
+        }
+        var:hover {
+            background: #0001;
+        }
+        .image {
+            pointer-events: none;
+        }
+        content > * {
+            user-select: none;
+            cursor: default;
+        }
+        content > *[onclick] {
+            cursor: pointer;
+        }
+        .text_ab_title {
+            transform: translateY(8px);
+        }
+        @media (min-width: 320px) and (max-width: 480px) {
+            #varlist, btns {
+                display: none !important;
+            }
+            #content {
+                zoom: 0.378 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <btns>
+    <button onclick="setPage(prompt('Page:'))">Set Page</button>
+    <button onclick="setPage('filemanagerlist')">Files</button>
+    <button onclick="setPage('ext_custom_theme')">Themes</button>
+    <button onclick="setPage('ext_custom_nav')">Nav</button>
+    <button onclick="setPage('ext_custom_fonts')">Font</button>
+    <button onclick="setPage('about')">About</button>
+        Если шрифт мелкий, то перезагрузись
+        <span id="currPage"></span>
+    </btns>
+    <content id="content"><span id="load" style="
+        font-size: 70px;
+        margin: 390px;
+        color: #fff;
+        text-align: center;
+        font-family: sans-serif;
+    ">Loading...</span></content>
+    <div id="varlist">
+
+    </div>
+    <script>
+        let content = document.getElementById('content')
+        let loadText = document.getElementById('load')
+        let varlistel = document.getElementById('varlist')
+        let currPage = document.getElementById('currPage')
+        let varlist = {}
+        let vars = {}
+        vars.navbar_disable_tmp = 1
+        vars.tw_backup_name = "OF demo"
+        vars.of_backup_empty = 1
+        vars.of_backup_rw = 1
+        vars.tw_operation_state = 1
+        vars.tw_operation_status = 0
+        vars.of_maintainer = 2
+        vars.center_y = 960
+        vars.screen_h = 1920
+        vars.screen_real_h = 1920
+        vars.status_h = 72
+        vars.tw_busy = 0
+        vars.startup = 1
+        vars.status_indent_left = 16
+        vars.status_indent_right = 16
+        vars.tw_time = "9:41"
+        vars.tw_storage_free_size = "5000MB"
+        vars.tw_storage_display_name = "Internal Storage"
+        vars.tw_clear_destination = "filemanagerlist"
+        let styles = {}
+        let images = {}
+        let fonts = {}
+        let templates = {}
+        let pages = {}
+        let strings = {}
+        let css = ""
+        let styleel = document.createElement('style')
+        document.body.append(styleel)
+
+        const load = url => {
+            url = "./" + url.replaceAll('/twres/', '')
+            let xhr = new XMLHttpRequest()
+            xhr.onload = () => parse(xhr.responseXML, url)
+            xhr.onerror = e => alert("Error while getting XML.")
+            xhr.open("GET", url)
+            xhr.responseType = "document"
+            xhr.send()
+        }
+
+        const style2CSS = (node, name) => {
+            let normal = ''
+            let hover = ''
+            let src = ''
+            let click = 'onclick="'
+            let includeHover = false
+            if (name !== undefined) {
+                normal = "\n."+name+"{\n"
+                hover = "\n."+name+":hover{\n"
+            }
+            let vis = true
+
+            for (x of node)
+                if (vis)
+                switch (x.tagName) {
+                    case 'font':
+                        normal += "font: "+fonts[x.getAttribute('resource')]+";"
+                        if (x.getAttribute('color') !== null) {
+                            normal += "color: "+compute(x.getAttribute('color'))+";"
+                        }
+                        if (x.getAttribute('highlightcolor') !== null) {
+                            hover += "color: "+compute(x.getAttribute('highlightcolor'))+";"
+                            includeHover = true
+                        }
+                        break;
+                    case 'fill':
+                    case 'background':
+                        normal += "background-color: "+compute(x.getAttribute('color'))+";"
+                        break;
+                    case 'highlight':
+                        hover += "background-color: "+compute(x.getAttribute('color'))+";"
+                        includeHover = true
+                        break;
+                    case 'image':
+                        normal += "content: url('./images/"+images[x.getAttribute('resource')]+".png');"
+                        normal += "background: url('./images/"+images[x.getAttribute('resource')]+".png') no-repeat;"
+                        src += "src='./images/"+images[x.getAttribute('resource')]+".png' "
+                        break;
+                    case 'color':
+                        if (x.getAttribute('foreground') !== null)
+                            normal += "color: "+compute(x.getAttribute('foreground'))+";"
+                        if (x.getAttribute('background') !== null)
+                            normal += "background-color: "+compute(x.getAttribute('background'))+";"
+                        break;
+                    case 'placement':
+                        let px = x.getAttribute('x')
+                        let py = x.getAttribute('y')
+                        let pw = x.getAttribute('w')
+                        let ph = x.getAttribute('h')
+                        let placement = x.getAttribute('placement')
+                        if (px !== null) normal += `left:${compute(px)};` 
+                        if (py !== null) normal += `top:${compute(py)};` 
+                        if (pw !== null) normal += `width:${compute(pw)};` 
+                        if (ph !== null) normal += `height:${compute(ph)};`
+                        switch (placement) {
+                            case '1': normal += "transform: translateX(-100%);"; break;
+                            case '2': normal += "transform: translateY(-100%);"; break;
+                            case '3': normal += "transform: translate(-100%, -100%);"; break;
+                            case '4': normal += "transform: translate(-50%, -50%);"; break;
+                            case '5': normal += "transform: translateX(-50%);"; break;
+                        }
+                        break;
+                    case 'action':
+                        switch (x.getAttribute('function')) {
+                            case 'set':
+                                click += "vars[`"+x.textContent.replace("=", "`]=`")+"`;"
+                                break;
+                        
+                            case 'page':
+                                click += "setPage(`"+x.textContent+"`);"
+                                break;
+                            case 'key':
+                                if (x.textContent == "home")
+                                    click += "eval(homeEval);"
+                                else if (x.textContent == "back")
+                                    click += "eval(backEval);"
+                                break;
+                        }
+                        break;
+                    case 'condition':
+                        vis = checkCond(x)
+                        break;
+                    case undefined: break;
+                    default:
+                        //console.warn(x.tagName+": CSS Unknown tag")
+                        break;
+                }
+
+            if (name === undefined) {
+                if (!vis) normal = "display: none"
+                if (click === 'onclick="') click = "";else {
+                    if (click.includes('setPage('))
+                        click+='"'
+                    else
+                        click+='setPage(lastpage)"'
+                }
+                if (includeHover)
+                    return click + src + 'style="'+normal+'" data-css="'+normal+'" onmouseover="style=`'+hover+'` onmouseleave="style=dataset.css"'
+                else
+                    return click + src + 'style="'+normal+'"'
+            } else {
+                if (includeHover)
+                    return normal+"\n}\n" + hover + "\n}\n"
+                else
+                    return normal+"\n}\n"
+            }
+        }
+
+        let lastpage = ""
+        const setPage = page => {
+            lastpage = page
+                                            console.log(lastpage)
+                                            currPage.textContent = page
+            content.innerHTML = page2HTML(pages[compute(page)])
+        }
+        
+        const checkCond = x => {
+            let var1 = compute("%"+x.getAttribute('var1')+"%")
+            let var2 = compute(x.getAttribute('var2') ?? '1')
+            let op = x.getAttribute('op') ?? "="
+            varlist[x.getAttribute('var1')] = var1
+            switch (op) {
+                case '=':
+                    if (var1 != var2) return false
+                    break;
+                case '!=':
+                    if (var1 == var2) return false
+                    break;
+                case '>=':
+                    if (+var1 < +var2) return false
+                    break;
+                case '<=':
+                    if (+var1 > +var2) return false
+                    break;
+                case '>':
+                    if (+var1 <= +var2) return false
+                    break;
+                case '<':
+                    if (+var1 >= +var2) return false
+                    break;
+                case 'modified':
+                return false
+            }
+            return true
+        }
+
+        let homeEval = ""
+        let backEval = ""
+
+        const page2HTML = node => {
+            homeEval = ""
+            backEval = ""
+            let ret = ""
+            let touchMode = false
+            let istrue = true
+            for (x of node)
+                switch (x.tagName) {
+                    case "background":
+                        ret += "<div class='bg' style='background:"+compute(x.getAttribute('color'))+"'></div>"
+                        break;
+                    case "action":
+                        touchMode = false
+                        istrue = true
+                        for (cond of x.getElementsByTagName("condition")) {
+                            istrue = checkCond(cond)
+                            if (istrue === false)
+                                break
+                        }
+
+                        if (istrue)
+                        for (a of x.children) {
+                            if (a.tagName === "action") {
+                                if (touchMode === "home")
+                                    switch (a.getAttribute('function')) {
+                                        case 'set':
+                                            homeEval += "vars[`"+a.textContent.replace("=", "`]=`")+"`;"
+                                            break;
+                                    
+                                        case 'page':
+                                            homeEval += "setPage(`"+a.textContent+"`);"
+                                            break;
+                                    }
+                                else if (touchMode === "back")
+                                    switch (a.getAttribute('function')) {
+                                        case 'set':
+                                            backEval += "vars[`"+a.textContent.replace("=", "`]=`")+"`;"
+                                            break;
+                                    
+                                        case 'page':
+                                            backEval += "setPage(`"+a.textContent+"`);"
+                                            break;
+                                    }
+                                else {
+                                    switch (a.getAttribute('function')) {
+                                        case 'set':
+                                            let set = a.textContent.split('=')
+                                            vars[set[0]] = set[1]
+                                            break;
+                                    
+                                        case 'page':
+                                            setTimeout(()=>
+                                            setPage(a.textContent), 10)
+                                            console.log(a.textContent)
+                                            break;
+                                        case 'checkbackupfolder':
+                                            setTimeout(()=>
+                                            setPage('restore_prep'), 10)
+                                            break;
+                                    }}
+                            } else if (a.tagName === "touch") touchMode = a.getAttribute('key')
+                        }
+                        break;
+                    case "gesture": 
+                    case "battery":
+                        break;
+                    case "button":
+                        let txtnode2 = x.getElementsByTagName('text')[0]
+                        let txt2 = txtnode2 == undefined ? "" : compute(txtnode2.textContent)
+                        ret += `<div class='${x.getAttribute('style') ?? x.tagName}' ${style2CSS(x.children)}>${txt2}</div>`
+                    case "image":
+                        ret += `<img class='${x.getAttribute('style') ?? x.tagName}' ${style2CSS(x.children)}>`
+                        break;
+                    case "text":
+                    case "checkbox":
+                        let txtnode = x.getElementsByTagName('text')[0]
+                        let txt = txtnode == undefined ? "" : compute(txtnode.textContent)
+                        ret += `<div class='${x.getAttribute('style') ?? x.tagName}' ${style2CSS(x.children)}>${txt}</div>`
+                        break;
+                    case "fill":
+                        let color = compute(x.getAttribute('color'))
+                        ret += `<div ${style2CSS(x.children)}><color style="background:${color}"></color></div>`
+                        break;
+                        
+                    case "keyboard":
+                    case "console":
+                    case "progressbar":
+                    case "partitionlist":
+                    case "fileselector":
+                    case "listbox":
+                    case "input":
+                    case "animation":
+                    case "slider":
+                    case "slidervalue":
+                        ret += `<div class='${x.getAttribute('style') ?? x.tagName}' ${style2CSS(x.children)}>${x.tagName}</div>`
+                        break;
+                    case 'template':
+                        ret += page2HTML(templates[x.getAttribute('name')])
+                        break;
+                    case undefined: break;
+                    default:
+                        console.warn(x.tagName+": Unknown tag")
+                        break;
+                }
+            
+                varlistel.innerHTML = ""
+            for (const [k, v] of Object.entries(varlist)) {
+                let varctrl = document.createElement('var')
+                varlistel.append(varctrl)
+                varctrl.textContent = k + ": " + v
+                varctrl.onclick = () => changeVar(k)
+            }
+            return ret
+        }
+
+        const changeVar = v => {
+            vars[v] = prompt(`Value for ${v}:`)
+            setPage(lastpage)
+        }
+
+        const compute = val => {
+            let ret = ""
+            if (val === null) {
+                console.warn('value is null!')
+                return ""
+            }
+            if (val.startsWith('{@')) {
+                if (val.includes('='))
+                    return strings[val.substr(2, val.search('=')-3)]
+                else
+                    return strings[val.substr(2, val.length-3)]
+            }
+            if (val.includes('%')) {
+                let variable = ""
+                let isvar = false
+                for (char of val)
+                    if (char === '%') {
+                        if (isvar) {
+                            if (!(vars[variable] > 10))
+                            varlist[variable] = vars[variable] ?? ''
+                            ret += vars[variable] ?? ''
+                        }
+                        isvar = !isvar
+                    } else if (isvar) variable += char
+                    else ret += char
+            } else ret = val
+            if (ret.includes('+')) {
+                let parts = ret.split('+')
+                ret = +parts[0] + +parts[1]
+            } else if (ret.includes('-')) {
+                let parts = ret.split('-')
+                ret = parts[0] - parts[1]
+            }
+            return ret
+        }
+
+        let progress = 0
+
+        const parse = (xml, url) => {
+            //if (cnt > 5) return; else cnt++
+            //console.info('Parsing: '+url)
+            if (xml === null) {
+                console.warn(url + ": children is null!")
+                return
+            }
+            if (xml.documentElement.nodeName === "recovery") {
+                for (e of xml.children[0].children) {
+                    switch (e.tagName) {
+                        case 'details':
+                            //console.info("Theme info: " + e.innerHTML)
+                            break;
+                        case 'include':
+                            for (x of e.children)
+                                if (x.tagName === 'xml')
+                                    load(x.getAttribute('default') ?? x.getAttribute('name'))
+                                else console.warn("xmlfile: TWRP syntax not allowed")
+                            break;
+                        case 'resources':
+                            for (x of e.children)
+                                if (x.tagName === 'image')
+                                    images[x.getAttribute('name')] = x.getAttribute('filename')
+                                else if (x.tagName === 'font') {
+                                    css += `
+                                        @font-face {
+                                            font-family: '${x.getAttribute('name')}';
+                                            src:  url('./fonts/${x.getAttribute('filename')}') format('truetype');
+                                        }`
+                                    fonts[x.getAttribute('name')] = x.getAttribute('size') + "px '" + x.getAttribute('name') + "'"
+                                } else
+                                    console.warn(x.tagName+": Unknown tag")
+                            break;
+                        case 'variables':
+                            for (x of e.children)
+                                if (x.tagName === 'variable')
+                                    vars[x.getAttribute('name')] = compute(x.getAttribute('value'))
+                                else
+                                    console.warn(x.tagName+": Unknown tag")
+                            break;
+                        case 'styles':
+                            for (x of e.children)
+                                if (x.tagName === 'style')
+                                    css += style2CSS(x.children, x.getAttribute('name'))
+                                else
+                                    console.warn(x.tagName+": Unknown tag")
+                            break;
+                        case 'pages':
+                            for (x of e.children)
+                                if (x.tagName === 'page')
+                                    pages[x.getAttribute('name')] = x.children
+                                else
+                                    console.warn(x.tagName+": Unknown tag")
+                            break;
+                        case 'templates': 
+                            for (x of e.children)
+                                if (x.tagName === 'template')
+                                    templates[x.getAttribute('name')] = x.children
+                                else
+                                    console.warn(x.tagName+": Unknown tag")
+                            break;
+                        default:
+                            console.warn("Unknown node: " + e.tagName /*+ "; Content:" + e.innerHTML*/)
+                            break;
+                    }
+                }
+            } else {
+                let res = xml.children[0].children[1].children
+                for (str of res)
+                    if (str.tagName === "string")
+                    strings[str.getAttribute('name')] = str.textContent
+            }
+            progress++
+            if (progress >= 33) {
+                styleel.innerHTML = css
+                loadText.textContent = "Ready"
+                varlistel.style.width = "300px"
+                document.getElementsByTagName('btns')[0].style.display = "flex"
+            }
+        }
+
+
+        if (location.protocol == "file:") {
+            loadText.textContent =
+            "You need a webserver to use this tool"
+        } else {
+            load('languages/en.xml')
+            load('ui.xml')
+        }
+    </script>
+</body>
+</html>
