@@ -123,7 +123,7 @@ body {
 }
 .bg {
     width: 1080px;
-    height: 2160px;
+    height: 100%;
     z-index: 0 !important;
 }
 #frame {
@@ -192,10 +192,10 @@ listitem[data-on="1"] > div > div {
     #varList, #buttons, #frame {
         display: none !important;
     }
-    #content {
-        zoom: 0.378 !important;
-    }
     body {
         background: #000 !important;
+    }
+    #content {
+        border-radius: 0 !important;
     }
 }

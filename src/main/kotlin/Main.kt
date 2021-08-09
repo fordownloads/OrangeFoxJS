@@ -18,6 +18,16 @@ fun main() {
         return
     }
 
+    if (window.navigator.userAgent.contains("Mobile")) {
+        val height = "${(window.screen.availHeight.toFloat() / window.screen.availWidth.toFloat()  * 1080F).toInt()}"
+        Res.vars["screen_h"] = height
+        Res.vars["screen_original_h"] = height
+        Res.vars["screen_real_h"] = height
+        content.setAttribute("style", "zoom:"+window.screen.availWidth/1080F)
+        content.style.height = "${height}px"
+        console.info("Selected height: ", height)
+    }
+
     buttons.addEventListener("click", { e ->
         val page = (e.target as HTMLElement).dataset["page"]?:""
         when (page) {
