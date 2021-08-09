@@ -7,6 +7,7 @@ import org.w3c.dom.HTMLStyleElement
 
 var progress = 0
 var lastPage = ""
+var lastOverlay = ""
 val varsOnPage = mutableMapOf<String, String?>()
 
 object Binding {
@@ -28,15 +29,25 @@ object Res {
         "tw_operation_status" to "0",
         "of_maintainer" to "2",
         "center_y" to "960",
-        "screen_h" to "1920",
-        "screen_original_h" to "1920",
-        "screen_real_h" to "1920",
+        "screen_h" to "2160",
+        "status_info_y" to "12",
+        "screen_original_h" to "2160",
+        "screen_real_h" to "2160",
         "tw_edl_mode" to "0",
+        "fox_ai_deep_learning_time" to "0",
+        "fox_total_backup" to "0",
         "status_h" to "72",
         "tw_busy" to "0",
         "startup" to "1",
-        "status_indent_left" to "16",
-        "status_indent_right" to "16",
+        "status_indent_left" to "80",
+        "status_indent_right" to "80",
+        "tw_reboot_system" to "1",
+        "tw_fastboot_mode" to "1",
+        "tw_file_location1" to "/sdcard",
+        "of_empty_dir" to "0",
+        "of_flashlight_enable" to "1",
+        "tw_reboot_poweroff" to "1",
+        "tw_reboot_recovery" to "1",
         "tw_time" to "19:41",
         "tw_storage_free_size" to "10000",
         "fox_compatibility_fox_device" to window.navigator.userAgent,

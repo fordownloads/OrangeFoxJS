@@ -16,6 +16,7 @@ import org.w3c.xhr.DOCUMENT
 import org.w3c.xhr.XMLHttpRequest
 import org.w3c.xhr.XMLHttpRequestResponseType
 import progress
+import setPage
 import warnMsg
 
 fun loadXML(url: String?) {
@@ -70,8 +71,7 @@ fun parseRoot(xml: Document) {
         }
 
     if (++progress >= 33) {
-        loadText.textContent = "Ready"
-        varList.style.width = "300px"
-        buttons.style.display = "flex"
+        buttons.style.transform = "translate(-50%, 4px)"
+        setPage("filemanagerlist")
     }
 }

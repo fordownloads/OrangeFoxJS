@@ -27,9 +27,10 @@ fun main() {
                 for ((k, v) in varsOnPage.entries) {
                     val item = document.createElement("var") as HTMLElement
                     varList.append(item)
-                    item.textContent = k + ": " + v
+                    item.textContent = "$k: $v"
                     item.onclick = { setVar(k) }
                 }
+                varList.style.width = "300px"
             }
             else -> setPage(page)
         }

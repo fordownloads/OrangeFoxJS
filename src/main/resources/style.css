@@ -3,10 +3,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #ccc;
+    background: url('bg.svg');
     height: 100vh;
     width: 100vw;
     overflow: hidden;
+    background-size: cover
 }
 /*#content > *:hover {
     color: var(--hover-color, inherit);
@@ -16,9 +17,9 @@ body {
 }*/
 #content {
     background: #202124;
-    border-radius: 24px;
+    border-radius: 88px;
     width: 1080px;
-    height: 1920px;
+    height: 2160px;
     position: relative;
     zoom: 0.3;
     overflow: hidden;
@@ -28,6 +29,12 @@ body {
 @-moz-document url-prefix() {
  #content  {
     transform: scale(0.3);
+ }
+ button[data-page="loadvars"],  #frame {
+    display: none !important
+ }
+ #chrome {
+     display: flex !important
  }
 }
 #content > div, #content > img, #content > input, #content > btn {
@@ -41,6 +48,9 @@ body {
 #content > btn {
     justify-content: center;
     align-items: center;
+}
+#content > input {
+    cursor: text
 }
 #content > * {
     user-select: none;
@@ -64,27 +74,48 @@ body {
 }
 #buttons {
     position: fixed;
-    top: 16px;
-    left: 16px;
-    display: flex;
     gap: 8px;
+    display: flex;
+    bottom: 0;
+    left: 50%;
+    border-radius: 16px 16px 0 0;
+    padding: 16px;
+    font: 14px 'Segoe UI', sans-serif;
+    box-shadow: 0 4px 16px 0 #0002;
+    background: #fafafa;
+    z-index: 100;
+    transform: translate(-50%, 100%);
+    transition: .3s all cubic-bezier(0.03, 0.54, 0, 1.34);
+}
+#chrome {
+    box-shadow: 0 4px 16px 0 #0002;
+    position: absolute;
+    top: 0;
+    background: crimson;
+    display: flex;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 16px;
+    border-radius: 0 0 16px 16px;
+    color: #fff;
+    font-weight: 500;
     display: none;
 }
 #varList {
     width: 0px;
     height: 512px;
-    background: #fff;
+    background: #fafafa;
     overflow-y: scroll;
     overflow-x: hidden;
     padding: 10px 0;
     transition: 0.4s ease all;
+    box-shadow: 0 4px 16px 0 #0002;
 }
 #varList > * {
     display: block;
     width: 100%;
-    height: 10px;
-    padding: 6px 10px;
-    font: 10px monospace;
+    height: 12px;
+    padding: 6px 32px;
+    font: 12px monospace;
     color:#202124
 }
 #varList > *:hover {
@@ -92,14 +123,37 @@ body {
 }
 .bg {
     width: 1080px;
-    height: 1920px;
+    height: 2160px;
     z-index: 0 !important;
+}
+#frame {
+    position: absolute;
+    height: 720px;
+    box-shadow: 4px 10px 56px 0px #0008, 0 0 400px 600px #0004;
+    border-radius: 49px;
+    transform: translate(-12px, -40px);
 }
 .image {
     pointer-events: none;
 }
 .text_ab_title {
     transform: translateY(2px);
+}
+.x_slider_wrap > div {
+    position: relative;
+    display: flex;
+    pointer-events: none
+}
+.x_slider_wrap:hover > div > .x_slider_touch {
+    transform: translateX(240%)
+}
+.x_slider {
+    content: var(--slider-base)
+}
+.x_slider_touch {
+    content: var(--slider-touch);
+        position: absolute;
+    transition: all 0.25s ease;
 }
 .x_listbox {
     flex-direction: column;
@@ -111,7 +165,8 @@ listitem {
     display: flex;
     height: var(--icon-h);
     pointer-events: all;
-    cursor: pointer
+    cursor: pointer;
+    flex-shrink: 0
 }
 listitem > * {
     pointer-events: none;
@@ -134,10 +189,13 @@ listitem[data-on="1"] > div > div {
 }
 
 @media (min-width: 320px) and (max-width: 480px) {
-    #varList, #buttons {
+    #varList, #buttons, #frame {
         display: none !important;
     }
     #content {
         zoom: 0.378 !important;
+    }
+    body {
+        background: #000 !important;
     }
 }

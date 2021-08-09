@@ -13,7 +13,7 @@ val div
     get() = document.createElement("div") as HTMLDivElement
 fun e(type: String) = document.createElement(type) as HTMLElement
 
-fun HTMLDivElement.loadPage(page: Element?) {
+fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
     page.forEachChild {
         when (val tagName = it.tagName) {
             "gesture", "battery" -> Unit
@@ -28,16 +28,18 @@ fun HTMLDivElement.loadPage(page: Element?) {
                         }
                     }
                 } ?: run {
-                    var actionStr = ""
-                    it.getElementsByTagName("condition").asList().forEach { cond ->
-                        if (!checkCondition(cond)) return@run
-                    }
-                    it.getElementsByTagName("action").asList().forEach { action ->
-                        action["function"]?.let { f ->
-                            actionStr += "$f@${action.textContent};"
+                    if (executeActions) {
+                        var actionStr = ""
+                        it.getElementsByTagName("condition").asList().forEach { cond ->
+                            if (!checkCondition(cond)) return@run
                         }
+                        it.getElementsByTagName("action").asList().forEach { action ->
+                            action["function"]?.let { f ->
+                                actionStr += "$f@${action.textContent};"
+                            }
+                        }
+                        executeActionString(actionStr, true)
                     }
-                    executeActionString(actionStr, true)
                 }
             }
 
@@ -50,13 +52,15 @@ fun HTMLDivElement.loadPage(page: Element?) {
             }
             "text", "checkbox" -> div.applyProps(it).apply {
                 textContent = it.getElementsByTagName("text")[0]?.textContent.parseValue()
-                className = it["style"]?:tagName
+                className = it["style"] ?: tagName
             }
             "button" -> {
                 e("btn").applyProps(it).apply {
                     append(e("div").apply { style.content = "var(--image)" })
-                    append(e("span").apply { textContent = it.getElementsByTagName("text")[0]?.textContent.parseValue() })
-                    className = it["style"]?:tagName
+                    append(e("span").apply {
+                        textContent = it.getElementsByTagName("text")[0]?.textContent.parseValue()
+                    })
+                    className = it["style"] ?: tagName
                 }
             }
 
@@ -64,8 +68,15 @@ fun HTMLDivElement.loadPage(page: Element?) {
                 style.content = "var(--image)"
                 className = it["style"] ?: tagName
             }
+            "keyboard" -> e("div").applyProps(it).apply {
+                style.content = "var(--image)"
+                className = it["style"] ?: tagName
+            }
 
-            "input" -> e("input").applyProps(it).className = it["style"] ?: tagName
+            "input" -> (e("input") as HTMLInputElement).apply {
+                className = it["style"] ?: tagName
+                value = it.getElementsByTagName("text")[0]?.textContent.parseValue()
+            }.applyProps(it)
 
             "listbox" -> {
                 val wrap = div.applyProps(it).apply { className = (it["style"]?:tagName) + " x_listbox" }
@@ -102,8 +113,18 @@ fun HTMLDivElement.loadPage(page: Element?) {
 
             }
 
-            "keyboard", "console", "progressbar", "partitionlist", "fileselector",
-             "animation", "slider", "slidervalue" ->
+            "slider" -> {
+                div.applyProps(it).apply {
+                    className = (it["style"] ?: tagName) + " x_slider_wrap"
+                    append(div.apply {
+                        append(div.apply { className = "x_slider" })
+                        append(div.apply { className = "x_slider_touch" })
+                    })
+                }
+            }
+
+            "console", "progressbar", "partitionlist", "fileselector", "terminal",
+             "animation", "slidervalue" ->
                 div.applyProps(it).apply {
                     textContent = tagName
                     className = it["style"]?:tagName

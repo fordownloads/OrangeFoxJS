@@ -8,14 +8,18 @@
         <link rel="stylesheet" href="./style.css?kek">
     </head>
     <body>
+        <div id="chrome">Looks better in Chrome</div>
         <div id="buttons">
             <button data-page="loadvars">Load Vars</button>
             <button data-page="!prompt">Set Page</button>
-            <button data-page="filemanagerlist">Home</button>
-            Reload page if font is small. Current page:
+            <button data-page="filemanagerlist">Go home</button>
+            Page:
             <span id="pageIndicator"></span>
         </div>
-        <div id="content"><span id="loadText">Loading...</span></div>
+        <div>
+            <img src="frame.svg" id="frame">
+            <div id="content"><span id="loadText">Loading...</span></div>
+        </div>
         <div id="varList"></div>
         <script src="OFTW-KT.js"></script>
     </body>

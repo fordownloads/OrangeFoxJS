@@ -41,13 +41,15 @@ fun checkCondition(cond: Element): Boolean {
     }
 }
 
-fun setPage(page: String = lastPage) {
+fun setPage(page: String = lastPage, executeActions: Boolean = true) {
     lastPage = page
     console.info("Changed page: $page")
     pageIndicator.textContent = page
     content.innerHTML = ""
     Res.keys.clear()
-    content.loadPage(Res.pages[page.parseValue()])
+    content.loadPage(Res.pages[page.parseValue()], executeActions)
+    if (lastOverlay != "")
+    content.loadPage(Res.pages[lastOverlay.parseValue()], executeActions)
 }
 
 fun setVar(name: String) {
@@ -68,6 +70,7 @@ fun executeActionString(actions: String, pageAction: Boolean = false) {
     timer = window.setTimeout({maxAct = 0}, 1500)
 
     var skipSetPage = false
+    var executeActions = false
     console.info(actions)
     actions.split(';').forEach {
         if (it.isEmpty()) return@forEach
@@ -79,7 +82,11 @@ fun executeActionString(actions: String, pageAction: Boolean = false) {
             }
             "appenddatetobackupname" -> Res.vars["tw_backup_name"] += Date().toISOString()
             "generatebackupname" -> Res.vars["tw_backup_name"] = "Demo-" + Date().toISOString()
-            "page" -> if (pageAction) setPage(param) else lastPage = param
+            "page" -> {
+                executeActions = true
+                if (pageAction) setPage(param) else lastPage = param
+            }
+            "overlay" -> lastOverlay = param
             "checkbackupfolder" -> window.setTimeout({setPage("restore_prep")}, 100)
             "key" -> {
                 skipSetPage = true
@@ -87,7 +94,7 @@ fun executeActionString(actions: String, pageAction: Boolean = false) {
             }
         }
     }
-    if (!skipSetPage && !pageAction) setPage(lastPage)
+    if (!skipSetPage && !pageAction) setPage(lastPage, executeActions)
 }
 
 fun loadFont(name: String?, url: String?) =
