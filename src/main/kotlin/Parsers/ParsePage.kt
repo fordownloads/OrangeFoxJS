@@ -21,6 +21,7 @@ fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
                 it.getElementsByTagName("touch")[0]?.let { touch ->
                     it.getElementsByTagName("action").asList().forEach { action ->
                         action["function"]?.let { f ->
+                            when (f) { "ftls", "terminalcommand", "cmd" -> return@let }
                             touch["key"]?.let { k ->
                                 if (Res.keys[k] == null) Res.keys[k] = ""
                                 Res.keys[k] += "$f@${action.textContent};"
@@ -35,6 +36,7 @@ fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
                         }
                         it.getElementsByTagName("action").asList().forEach { action ->
                             action["function"]?.let { f ->
+                                when (f) { "ftls", "terminalcommand", "cmd" -> return@let }
                                 actionStr += "$f@${action.textContent};"
                             }
                         }
@@ -75,7 +77,7 @@ fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
 
             "input" -> (e("input") as HTMLInputElement).apply {
                 className = it["style"] ?: tagName
-                value = it.getElementsByTagName("text")[0]?.textContent.parseValue()
+                value = it.getElementsByTagName("text")[0]?.textContent?.parseValue() ?: ""
             }.applyProps(it)
 
             "listbox" -> {
@@ -101,7 +103,7 @@ fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
                         }
                         item.getElementsByTagName("action").asList().forEach { action ->
                             action["function"]?.let { f ->
-                                console.log("Action","$f@${action.textContent};")
+                                when (f) { "ftls", "terminalcommand", "cmd" -> return@let }
                                 val data = itemEl.dataset
                                 if (data["action"] == undefined) data["action"] = ""
                                 data["action"] += "$f@${action.textContent};"

@@ -58,6 +58,7 @@ fun parseProps(node: Element, element: HTMLElement): Boolean {
                 it["background"]?.let { v -> style.backgroundColor = v.parseValue() }
             }
             "action" -> it["function"]?.let { f ->
+                when (f) { "ftls", "terminalcommand", "cmd" -> return@let }
                 val data = element.dataset
                 if (data["action"] == undefined) data["action"] = ""
                 data["action"] += "$f@${it.textContent};"
