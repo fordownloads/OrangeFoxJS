@@ -6,6 +6,7 @@ import Parsers.parseValue
 import kotlinx.browser.window
 import org.w3c.dom.Element
 import org.w3c.dom.asList
+import kotlin.js.Date
 
 
 operator fun Element.get(name: String): String? { return getAttribute(name) }
@@ -41,12 +42,12 @@ fun checkCondition(cond: Element): Boolean {
 }
 
 fun setPage(page: String = lastPage) {
+    lastPage = page
     console.info("Changed page: $page")
     pageIndicator.textContent = page
     content.innerHTML = ""
     Res.keys.clear()
     content.loadPage(Res.pages[page.parseValue()])
-    lastPage = page
 }
 
 fun setVar(name: String) {
@@ -76,6 +77,8 @@ fun executeActionString(actions: String, pageAction: Boolean = false) {
                 val (k, v) = param.split('=')
                 Res.vars[k] = v.parseValue()
             }
+            "appenddatetobackupname" -> Res.vars["tw_backup_name"] += Date().toISOString()
+            "generatebackupname" -> Res.vars["tw_backup_name"] = "Demo-" + Date().toISOString()
             "page" -> if (pageAction) setPage(param) else lastPage = param
             "checkbackupfolder" -> window.setTimeout({setPage("restore_prep")}, 100)
             "key" -> {

@@ -35,13 +35,15 @@ fun parseProps(node: Element, element: HTMLElement): Boolean {
                     it["y"]?.let { v -> top = v.parseValue() + "px" }
                     it["w"]?.let { v -> width = v.parseValue() + "px" }
                     it["h"]?.let { v -> height = v.parseValue() + "px" }
-                    when (it["placement"]) {
-                        "1" -> transform = "translateX(-100%)"
-                        "2" -> transform = "translateY(-100%)"
-                        "3" -> transform = "translate(-100%, -100%)"
-                        "4" -> transform = "translate(-50%, -50%)"
-                        "5" -> transform = "translateX(-50%)"
-                    }
+
+                    if (node.tagName != "fill")
+                        when (it["placement"]) {
+                            "1" -> transform = "translateX(-100%)"
+                            "2" -> transform = "translateY(-100%)"
+                            "3" -> transform = "translate(-100%, -100%)"
+                            "4" -> transform = "translate(-50%, -50%)"
+                            "5" -> transform = "translateX(-50%)"
+                        }
                 }
             }
             "font" -> {
@@ -63,8 +65,19 @@ fun parseProps(node: Element, element: HTMLElement): Boolean {
             "fill", "background" -> it["color"]?.let { v -> style.backgroundColor = v.parseValue() }
             "highlight" -> it["color"]?.let { v ->
                 style.setProperty("--hover-background", v.parseValue())
+
             }
-            "image" -> it["resource"]?.let { v -> style.content = "url('./images/${Res.images[v]}.png')" }
+            "image" -> it["resource"]?.let { v -> style.setProperty("--image","url('./images/${Res.images[v]}.png')") }
+            "iconsize" -> {
+                it["w"]?.let { v -> style.setProperty("--icon-w",v.parseValue()+"px") }
+                it["h"]?.let { v -> style.setProperty("--icon-h",v.parseValue()+"px") }
+                it["padding"]?.let { v -> style.setProperty("--icon-padding",v.parseValue()+"px") }
+            }
+            "icon" -> {
+                it["selected"]?.let { v -> style.setProperty("--icon-selected", "url('./images/${Res.images[v]}.png')") }
+                it["unselected"]?.let { v -> style.setProperty("--icon-unselected", "url('./images/${Res.images[v]}.png')") }
+            }
+            //"image" -> it["resource"]?.let { v -> style.content = "url('./images/${Res.images[v]}.png')" }
         }
     }
     return visible

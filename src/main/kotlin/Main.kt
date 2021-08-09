@@ -2,11 +2,14 @@ import Binding.buttons
 import Binding.content
 import Binding.loadText
 import Binding.pageIndicator
+import Binding.varList
 import Parsers.loadXML
 import Parsers.parseValue
+import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.dom.clear
 import org.w3c.dom.*
-
+import org.w3c.dom.events.KeyboardEvent
 
 
 fun main() {
@@ -17,14 +20,32 @@ fun main() {
 
     buttons.addEventListener("click", { e ->
         val page = (e.target as HTMLElement).dataset["page"]?:""
-        if (page == "!prompt")
-            window.prompt("Page: ")?.let { setPage(it) }
-        else
-            setPage(page)
+        when (page) {
+            "!prompt" -> window.prompt("Page: ")?.let { setPage(it) }
+            "loadvars" -> {
+                varList.clear()
+                for ((k, v) in varsOnPage.entries) {
+                    val item = document.createElement("var") as HTMLElement
+                    varList.append(item)
+                    item.textContent = k + ": " + v
+                    item.onclick = { setVar(k) }
+                }
+            }
+            else -> setPage(page)
+        }
     })
 
     content.addEventListener("click", { e ->
-        (e.target as HTMLElement).dataset["action"]?.let { executeActionString(it) }
+        val target = e.target as HTMLElement
+        if (target.tagName != "INPUT")
+            target.dataset["action"]?.let { executeActionString(it) }
+    })
+
+    content.addEventListener("keypress", { e ->
+        if ((e as KeyboardEvent).key != "Enter") return@addEventListener
+        val target = e.target as HTMLElement
+        if (target.tagName == "INPUT")
+            target.dataset["action"]?.let { executeActionString(it) }
     })
 
     loadXML("languages/en.xml")

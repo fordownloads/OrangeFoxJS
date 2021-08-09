@@ -8,12 +8,12 @@ body {
     width: 100vw;
     overflow: hidden;
 }
-#content > *[hc]:hover {
-    color: var(--hover-color);
+/*#content > *:hover {
+    color: var(--hover-color, inherit);
 }
-#content > *[hb]:hover {
-    background: var(--hover-background);
-}
+#content > *:hover {
+    background: var(--hover-background, inherit);
+}*/
 #content {
     background: #202124;
     border-radius: 24px;
@@ -25,21 +25,34 @@ body {
     box-shadow: 0 4px 16px 0 #0003;
     display: flex;
 }
-#content > div, #content > img, #content > input, #content > button {
+@-moz-document url-prefix() {
+ #content  {
+    transform: scale(0.3);
+ }
+}
+#content > div, #content > img, #content > input, #content > btn {
     border: none;
-    background: #0000;
     position: absolute;
     z-index: 5;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    outline: none;
     white-space: nowrap;
+}
+#content > btn {
+    justify-content: center;
+    align-items: center;
 }
 #content > * {
     user-select: none;
     cursor: default;
 }
-#content > *[onclick] {
+#content > btn > span {
+    position: absolute
+}
+#content > btn > *, .text {
+    pointer-events: none
+}
+#content > *[data-action] {
     cursor: pointer;
 }
 #loadText {
@@ -66,7 +79,7 @@ body {
     padding: 10px 0;
     transition: 0.4s ease all;
 }
-li {
+#varList > * {
     display: block;
     width: 100%;
     height: 10px;
@@ -74,27 +87,52 @@ li {
     font: 10px monospace;
     color:#202124
 }
-li:hover {
+#varList > *:hover {
     background: #0001;
-}
-img {
-    background: none !important;
 }
 .bg {
     width: 1080px;
     height: 1920px;
     z-index: 0 !important;
 }
-.color {
-    width: 100%;
-    height: 100%;
-}
 .image {
     pointer-events: none;
 }
 .text_ab_title {
-    transform: translateY(8px);
+    transform: translateY(2px);
 }
+.x_listbox {
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: block;
+}
+listitem {
+    display: flex;
+    height: var(--icon-h);
+    pointer-events: all;
+    cursor: pointer
+}
+listitem > * {
+    pointer-events: none;
+}
+listitem > div {
+    width: var(--icon-w);
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
+listitem > span {
+    align-self: center
+}
+listitem > div > div {
+    padding-right: calc(var(--icon-padding) * 2);
+    content: var(--icon-unselected)
+}
+listitem[data-on="1"] > div > div {
+    content: var(--icon-selected)
+}
+
 @media (min-width: 320px) and (max-width: 480px) {
     #varList, #buttons {
         display: none !important;

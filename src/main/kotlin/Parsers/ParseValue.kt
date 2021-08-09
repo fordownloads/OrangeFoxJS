@@ -14,7 +14,7 @@ fun String?.parseValue(): String {
 
     if (ret.contains("{@"))
         ret = ret.replace("{@", "}").split('}').mapIndexed { p, s ->
-            if (p % 2 == 0) s else Res.strings[s]
+            if (p % 2 == 0) s else Res.strings[s.split('=')[0]]
         }.joinToString("")
 
     try {
