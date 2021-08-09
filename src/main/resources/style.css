@@ -1,0 +1,105 @@
+body {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ccc;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+#content > *[hc]:hover {
+    color: var(--hover-color);
+}
+#content > *[hb]:hover {
+    background: var(--hover-background);
+}
+#content {
+    background: #202124;
+    border-radius: 24px;
+    width: 1080px;
+    height: 1920px;
+    position: relative;
+    zoom: 0.3;
+    overflow: hidden;
+    box-shadow: 0 4px 16px 0 #0003;
+    display: flex;
+}
+#content > div, #content > img, #content > input, #content > button {
+    border: none;
+    background: #0000;
+    position: absolute;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+#content > * {
+    user-select: none;
+    cursor: default;
+}
+#content > *[onclick] {
+    cursor: pointer;
+}
+#loadText {
+    font-size: 70px;
+    margin: 390px;
+    color: #fff;
+    text-align: center;
+    font-family: sans-serif;
+}
+#buttons {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    display: flex;
+    gap: 8px;
+    display: none;
+}
+#varList {
+    width: 0px;
+    height: 512px;
+    background: #fff;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding: 10px 0;
+    transition: 0.4s ease all;
+}
+li {
+    display: block;
+    width: 100%;
+    height: 10px;
+    padding: 6px 10px;
+    font: 10px monospace;
+    color:#202124
+}
+li:hover {
+    background: #0001;
+}
+img {
+    background: none !important;
+}
+.bg {
+    width: 1080px;
+    height: 1920px;
+    z-index: 0 !important;
+}
+.color {
+    width: 100%;
+    height: 100%;
+}
+.image {
+    pointer-events: none;
+}
+.text_ab_title {
+    transform: translateY(8px);
+}
+@media (min-width: 320px) and (max-width: 480px) {
+    #varList, #buttons {
+        display: none !important;
+    }
+    #content {
+        zoom: 0.378 !important;
+    }
+}
