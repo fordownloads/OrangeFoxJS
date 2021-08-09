@@ -76,6 +76,8 @@ fun parseProps(node: Element, element: HTMLElement): Boolean {
             "icon" -> {
                 it["selected"]?.let { v -> style.setProperty("--icon-selected", "url('./images/${Res.images[v]}.png')") }
                 it["unselected"]?.let { v -> style.setProperty("--icon-unselected", "url('./images/${Res.images[v]}.png')") }
+                it["folder"]?.let { v -> style.setProperty("--icon-folder", "url('./images/${Res.images[v]}.png')") }
+                it["file"]?.let { v -> style.setProperty("--icon-file", "url('./images/${Res.images[v]}.png')") }
             }
             "resource" -> {
                 it["base"]?.let { v -> style.setProperty("--slider-base", "url('./images/${Res.images[v]}.png')") }

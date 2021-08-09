@@ -123,8 +123,49 @@ fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
                 }
             }
 
-            "console", "progressbar", "partitionlist", "fileselector", "terminal",
-             "animation", "slidervalue" ->
+            "fileselector" -> {
+                val wrap = div.applyProps(it).apply {
+                    style.setProperty("--icon-unselected", "var(--icon-folder)")
+                    className = (it["style"]?:tagName) + " x_listbox"
+                }
+
+
+                listOf("..", "Alarms", "Android", "DCIM", "Documents", "Download", "Fox", "Movies", "Music", "Notifications",
+                    "Pictures", "Playlists", "Podcasts", "Ringtones", "Sounds").forEach { item ->
+                    wrap.append(e("listitem").apply {
+                        append(div.apply {append(e("div"))})
+                        append(e("span").apply {
+                            textContent = item
+                        })
+                    })
+                }
+            }
+
+            "partitionlist" -> {
+                val wrap = div.applyProps(it).apply { className = (it["style"]?:tagName) + " x_listbox" }
+
+                when(it.getElementsByTagName("listtype")[0]?.get("name")) {
+                    "storage" -> listOf("Internal Storage (10050MB)", "MicroSD (140MB)", "USB-OTG (0MB)")
+                    "wipe", "part_option" -> listOf("Dalvik Cache", "Cache", "Data", "System", "Vendor", "Internal Storage", "MicroSD", "USB-OTG")
+
+                    "backup", "backup_total", "restore" -> listOf("Boot (128MB)", "Recovery (128MB)",
+                        "System (2189MB)", "System Image (4096MB)", "Vendor (489MB)", "Vendor Image (800MB)",
+                        "Data (9548MB)", "Storage (28185MB)", "Persist (128MB)", "Firmware (268MB)")
+                    "mount" -> listOf("System", "Vendor", "Data", "Cache", "Modem", "MicroSD", "USB-OTG")
+
+                    "flashimg" -> listOf("Boot", "Recovery", "System", "Vendor")
+                    else -> listOf("bruh")
+                }.forEach { item ->
+                    wrap.append(e("listitem").apply {
+                        append(div.apply {append(e("div"))})
+                        append(e("span").apply {
+                            textContent = item
+                        })
+                    })
+                }
+            }
+
+            "console", "progressbar", "terminal", "animation", "slidervalue" ->
                 div.applyProps(it).apply {
                     textContent = tagName
                     className = it["style"]?:tagName
