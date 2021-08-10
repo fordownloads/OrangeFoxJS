@@ -48,7 +48,7 @@ fun parseRoot(xml: Document) {
                     }
                 }
                 "include" -> forEachChild {
-                    loadXML(it["default"] ?: it["name"])
+                    if (it isTag "xml") loadXML(it["default"] ?: it["name"])
                 }
                 "variables" -> forEachChild {
                     Res.vars.add(it, it["value"].parseValue())

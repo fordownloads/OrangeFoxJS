@@ -82,6 +82,13 @@ fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
 
             "listbox" -> {
                 val wrap = div.applyProps(it).apply { className = (it["style"]?:tagName) + " x_listbox" }
+                var radioName = ""
+                var radioVal = ""
+
+                it.getElementsByTagName("data")[0]?.getAttribute("name")?.let { v ->
+                    radioName = v
+                    radioVal = Res.vars[v] ?: ""
+                }
                 it.getElementsByTagName("listitem").asList().forEach { item ->
                     var visible = true
                     item.getElementsByTagName("condition").asList().forEach { cond ->
@@ -107,6 +114,23 @@ fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
                                 val data = itemEl.dataset
                                 if (data["action"] == undefined) data["action"] = ""
                                 data["action"] += "$f@${action.textContent};"
+                            }
+                        }
+                        if (radioName == "")
+                            item.getElementsByTagName("data")[0]?.get("variable")?.let { v ->
+                                val data = itemEl.dataset
+                                val state = Res.vars[v] ?: "0"
+                                data["on"] = state
+                                if (data["action"] == undefined) data["action"] = ""
+                                data["action"] += "set@$v=${if (state == "1") 0 else 1};"
+                            }
+                        else {
+                            val data = itemEl.dataset
+                            if (radioVal == item.textContent)
+                                data["on"] = "1"
+                            else {
+                                if (data["action"] == undefined) data["action"] = ""
+                                data["action"] += "set@$radioName=${item.textContent};"
                             }
                         }
                         wrap.append(itemEl)
