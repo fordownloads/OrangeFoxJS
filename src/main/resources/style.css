@@ -217,6 +217,17 @@ listitem[data-on="1"] > div > div {
     content: var(--icon-selected)
 }
 
+.x_listbox::-webkit-scrollbar{
+    width: var(--scroll-w);
+    height: var(--scroll-w);
+}
+.x_listbox::-webkit-scrollbar-thumb{
+    background: var(--scroll-color);
+}
+.x_listbox::-webkit-scrollbar-track{
+    background: #0000;
+}
+
 @media (min-width: 320px) and (max-width: 480px) {
     #varList, #buttons, #frame {
         display: none !important;
@@ -227,4 +238,8 @@ listitem[data-on="1"] > div > div {
     #content {
         border-radius: 0 !important;
     }
+}
+
+.desktop {
+    display: var(--desktop, "unset")
 }

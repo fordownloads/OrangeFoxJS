@@ -66,7 +66,10 @@ fun parseProps(node: Element, element: HTMLElement): Boolean {
             "fill", "background" -> it["color"]?.let { v -> style.backgroundColor = v.parseValue() }
             "highlight" -> it["color"]?.let { v ->
                 style.setProperty("--hover-background", v.parseValue())
-
+            }
+            "fastscroll" -> {
+                it["rectcolor"]?.let { v -> style.setProperty("--scroll-color",v.parseValue()) }
+                it["w"]?.let { v -> style.setProperty("--scroll-w",v.parseValue()+"px") }
             }
             "image" -> it["resource"]?.let { v -> style.setProperty("--image","url('./images/${Res.images[v]}.png')") }
             "iconsize" -> {
