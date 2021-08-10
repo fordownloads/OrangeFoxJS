@@ -1,11 +1,9 @@
 import Binding.buttons
 import Binding.content
 import Binding.loadText
-import Binding.pageIndicator
 import Binding.varList
 import Binding.varListWrap
 import Parsers.loadXML
-import Parsers.parseValue
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.dom.clear

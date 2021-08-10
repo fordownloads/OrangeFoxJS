@@ -228,18 +228,6 @@ listitem[data-on="1"] > div > div {
     background: #0000;
 }
 
-@media (min-width: 320px) and (max-width: 480px) {
-    #varList, #buttons, #frame {
-        display: none !important;
-    }
-    body {
-        background: #000 !important;
-    }
-    #content {
-        border-radius: 0 !important;
-    }
-}
-
 .desktop {
-    display: var(--desktop, "unset")
+    display: var(--desktop, inherit)
 }
