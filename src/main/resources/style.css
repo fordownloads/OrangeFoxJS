@@ -15,6 +15,45 @@ body {
 #content > *:hover {
     background: var(--hover-background, inherit);
 }*/
+.left-wrap {
+    position: fixed;
+    bottom: 50%;
+    left: 0%;
+    z-index: 100;
+    transform: translate(-80%, 50%);
+    display: flex;
+    gap: 16px;
+    flex-direction: column;
+}
+.left-pane {
+    gap: 4px;
+    display: flex;
+    border-radius: 0 24px 24px 0;
+    padding: 16px 16px 16px 72px;
+    font: 14px 'Segoe UI', sans-serif;
+    box-shadow: 0 4px 16px 0 #0002;
+    background: #fafafa;
+    width: 100px;
+    transition: .3s all cubic-bezier(0.2, 0.8, 0, 1);
+}
+.left-pane:hover {
+    transform: translateX(50%);
+}
+.left-pane > button:hover {
+    background: #ed6f02;
+    color: #fafafa;
+}
+.left-pane > button {
+    cursor: pointer;
+    transition: .3s all ease;
+    border: none;
+    background: #ed6f021f;
+    color: #723500;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Segoe UI', sans-serif;
+}
 #content {
     background: #202124;
     border-radius: 88px;
@@ -72,21 +111,6 @@ body {
     text-align: center;
     font-family: sans-serif;
 }
-#buttons {
-    position: fixed;
-    gap: 8px;
-    display: flex;
-    bottom: 0;
-    left: 50%;
-    border-radius: 16px 16px 0 0;
-    padding: 16px;
-    font: 14px 'Segoe UI', sans-serif;
-    box-shadow: 0 4px 16px 0 #0002;
-    background: #fafafa;
-    z-index: 100;
-    transform: translate(-50%, 100%);
-    transition: .3s all cubic-bezier(0.03, 0.54, 0, 1.34);
-}
 #chrome {
     box-shadow: 0 4px 16px 0 #0002;
     position: absolute;
@@ -106,15 +130,20 @@ body {
     background: #fafafa;
     overflow-y: scroll;
     overflow-x: hidden;
-    padding: 10px 0;
+    padding: 6px 0;
     transition: 0.4s ease all;
     box-shadow: 0 4px 16px 0 #0002;
+}
+#varListWrap {
+    border-radius: 16px;
+    overflow: hidden;
+    z-index: 10
 }
 #varList > * {
     display: block;
     width: 100%;
     height: 12px;
-    padding: 6px 32px;
+    padding: 6px 16px;
     font: 12px monospace;
     color:#202124
 }
@@ -129,8 +158,8 @@ body {
 #frame {
     position: absolute;
     height: 720px;
-    box-shadow: 4px 10px 56px 0px #0008, 0 0 400px 600px #0004;
-    border-radius: 49px;
+    box-shadow: 4px 10px 56px 0px #0008;
+    border-radius: 50px;
     transform: translate(-12px, -40px);
 }
 .image {

@@ -9,18 +9,19 @@
     </head>
     <body>
         <div id="chrome">Looks better in Chrome</div>
-        <div id="buttons">
-            <button data-page="loadvars">Load Vars</button>
-            <button data-page="!prompt">Set Page</button>
-            <button data-page="filemanagerlist">Go home</button>
-            Page:
-            <span id="pageIndicator"></span>
+        <div class="left-wrap">
+            <div id="buttons" style="flex-direction: column;" class="left-pane">
+                <button data-page="loadvars" style="border-radius: 8px 8px 4px 4px; ">Load Vars</button>
+                <button data-page="!prompt" style="border-radius: 4px;">Set Page</button>
+                <button data-page="filemanagerlist" style="border-radius: 4px 4px 8px 8px;">Go home</button>
+            </div>
+            <div class="left-pane" style="font-size: 10px;">P: <span id="pageIndicator"></span></div>
         </div>
         <div>
             <img src="frame.svg" id="frame">
             <div id="content"><span id="loadText">Loading...</span></div>
         </div>
-        <div id="varList"></div>
+        <div id="varListWrap"><div id="varList"></div></div>
         <script src="OFTW-KT.js"></script>
     </body>
 </html>

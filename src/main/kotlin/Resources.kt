@@ -14,6 +14,7 @@ object Binding {
     val content = document.getElementById("content") as HTMLDivElement
     val loadText = document.getElementById("loadText") as HTMLSpanElement
     val varList = document.getElementById("varList") as HTMLDivElement
+    val varListWrap = document.getElementById("varListWrap") as HTMLDivElement
     val buttons = document.getElementById("buttons") as HTMLDivElement
     val pageIndicator = document.getElementById("pageIndicator") as HTMLSpanElement
     val contentStyles = document.getElementById("contentStyles") as HTMLStyleElement

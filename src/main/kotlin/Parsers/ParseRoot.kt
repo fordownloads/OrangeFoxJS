@@ -36,7 +36,7 @@ fun parseRoot(xml: Document) {
     if (xml.documentElement?.nodeName == "recovery")
         xml.children[0]?.forEachChild { e -> with(e) {
             when (tagName) {
-                "details" -> console.info("Theme info: " + e.innerHTML)
+                "details" -> Unit//console.info("Theme info: " + e.innerHTML)
                 "resources" -> forEachChild {
                     when (it.tagName) {
                         "image" -> Res.images.add(it, it["filename"])
@@ -48,19 +48,19 @@ fun parseRoot(xml: Document) {
                     }
                 }
                 "include" -> forEachChild {
-                    if (it isTag "xml") loadXML(it["default"] ?: it["name"])
+                    loadXML(it["default"] ?: it["name"])
                 }
                 "variables" -> forEachChild {
-                    if (it isTag "variable") Res.vars.add(it, it["value"].parseValue())
+                    Res.vars.add(it, it["value"].parseValue())
                 }
                 "styles" -> forEachChild {
-                    if (it isTag "style") it["name"]?.let { v -> parseGlobalProps(it, contentStyles, v) }
+                    it["name"]?.let { v -> parseGlobalProps(it, contentStyles, v) }
                 }
                 "pages" -> forEachChild {
-                    if (it isTag "page") Res.pages.add(it, it)
+                    Res.pages.add(it, it)
                 }
                 "templates" -> forEachChild {
-                    if (it isTag "template") Res.templates.add(it, it)
+                    Res.templates.add(it, it)
                 }
                 else -> warnMsg("$tagName: Unknown node")
             }
@@ -70,8 +70,6 @@ fun parseRoot(xml: Document) {
             if (it isTag "string") Res.strings.add(it, it.textContent)
         }
 
-    if (++progress >= 33) {
-        buttons.style.transform = "translate(-50%, 4px)"
+    if (++progress >= 33)
         setPage("filemanagerlist")
-    }
 }

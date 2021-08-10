@@ -3,6 +3,7 @@ import Binding.content
 import Binding.loadText
 import Binding.pageIndicator
 import Binding.varList
+import Binding.varListWrap
 import Parsers.loadXML
 import Parsers.parseValue
 import kotlinx.browser.document
@@ -41,6 +42,7 @@ fun main() {
                     item.onclick = { setVar(k) }
                 }
                 varList.style.width = "300px"
+                varListWrap.style.marginLeft = "24px"
             }
             else -> setPage(page)
         }

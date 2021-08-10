@@ -61,7 +61,7 @@ var maxAct = 0
 var timer = 0
 
 fun executeActionString(actions: String, pageAction: Boolean = false) {
-    if (++maxAct >= 25) {
+    if (++maxAct >= 30) {
         window.alert("Too many actions detected")
         return
     }
@@ -87,7 +87,10 @@ fun executeActionString(actions: String, pageAction: Boolean = false) {
                 if (pageAction) setPage(param) else lastPage = param
             }
             "overlay" -> lastOverlay = param
-            "checkbackupfolder" -> window.setTimeout({setPage("restore_prep")}, 100)
+            "checkbackupfolder" -> {
+                executeActions = true
+                if (pageAction) setPage("restore_prep") else lastPage = "restore_prep"
+            }
             "key" -> {
                 skipSetPage = true
                 Res.keys[param]?.let { v -> executeActionString(v) }
