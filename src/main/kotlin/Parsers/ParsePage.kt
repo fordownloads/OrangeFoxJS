@@ -191,7 +191,11 @@ fun HTMLDivElement.loadPage(page: Element?, executeActions: Boolean = true) {
                 }
             }
 
-            "console", "progressbar", "terminal", "animation", "slidervalue" ->
+            "slidervalue" -> {
+
+            }
+
+            "console", "progressbar", "terminal", "animation" ->
                 div.applyProps(it).apply {
                     textContent = tagName
                     className = it["style"]?:tagName

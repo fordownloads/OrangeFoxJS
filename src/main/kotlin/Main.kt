@@ -18,11 +18,11 @@ fun main() {
     }
 
     if (window.navigator.userAgent.contains("Mobile") || window.location.search.contains("fs")) {
-        val height = "${(window.screen.height.toFloat() / window.screen.width.toFloat()  * 1080F).toInt()}"
+        val height = "${(window.screen.availHeight.toFloat() / window.screen.availWidth.toFloat()  * 1080F).toInt()}"
         Res.vars["screen_h"] = height
         Res.vars["screen_original_h"] = height
         Res.vars["screen_real_h"] = height
-        content.setAttribute("style", "zoom:"+window.screen.width/1080F)
+        content.setAttribute("style", "zoom:"+window.screen.availWidth/1080F)
         content.style.height = "${height}px"
         content.style.borderRadius = "0"
         document.body?.style?.background = "#000"

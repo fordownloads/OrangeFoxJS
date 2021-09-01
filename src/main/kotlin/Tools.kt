@@ -27,6 +27,7 @@ fun <T> MutableMap<String, T>.add(el: Element, value: T) =
 
 fun checkCondition(cond: Element): Boolean {
     val var1 = "%${cond["var1"]}%".parseValue()
+    if (var1 == "fileexists") return true
     val var2 = (cond["var2"] ?: "1").parseValue()
     cond["var1"]?.let { varsOnPage[it] = var1 }
     return when (cond["op"] ?: "=") {
